@@ -1,199 +1,361 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mopi Market - تسجيل الدخول</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mopi Market — موبي ماركت/title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #0b3d2e);
-      color: #e6f2ef;
+    :root{
+      --accent:#00b894;
+      --accent-2:#00966f;
+      --bg-1:#07121a;
+      --muted:#d0e9df;
+      --danger:#ff6b6b;
+      --success:#2ecc71;
+      --card-bg: rgba(255,255,255,0.03);
+      --radius:14px;
+      font-family: "Segoe UI", Tahoma, Arial, "Noto Naskh Arabic", sans-serif;
     }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 20px;
-      background: rgba(255,255,255,0.05);
+
+    /* دائمًا تباين عالي */
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(180deg,var(--bg-1), #042b1f 100%);
+      color:#eaf6ef;
+      filter: contrast(1.15) saturate(1.05);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* خلفية مجسمات متحركة */
+    #bgCanvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      display:block;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(0,184,148,0.06), transparent 10%),
+                  radial-gradient(1000px 500px at 90% 80%, rgba(0,120,90,0.05), transparent 10%),
+                  linear-gradient(180deg,#07121a 0%, #042b1f 100%);
+    }
+
+    /* شريط علوي */
+    .topbar{
+      position:fixed;left:0;right:0;top:0;height:72px;
+      display:flex;align-items:center;justify-content:center;padding:12px 20px;
+      background: rgba(0,0,0,0.28);border-bottom:1px solid rgba(255,255,255,0.06);z-index:30;
+    }
+    .topbar .brand{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:84px;height:84px;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,0.06);
+      display:flex;align-items:center;justify-content:center;background:#062b1f;
+    }
+    .brand-text{display:flex;flex-direction:column;align-items:flex-start}
+    .brand-text h1{margin:0;font-size:18px;color:#fff}
+    .brand-text .tag{font-size:13px;color:var(--muted)}
+
+    /* الحاوية المركزية */
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 20px 40px;position:relative;z-index:10}
+    .card{
+      width:520px;max-width:96%;padding:26px;border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
       backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align:center;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+
+    /* شعار فوق اللوحة */
+    .card .logo-top{margin:-72px auto 8px auto;width:120px;height:120px;border-radius:16px;overflow:hidden;border:3px solid rgba(255,255,255,0.06);background:#062b1f;display:flex;align-items:center;justify-content:center}
+    .card .logo-top img{width:100%;height:100%;object-fit:cover}
+
+    h2{margin:8px 0 6px 0;color:#fff;font-size:20px}
+    .sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+
+    /* أزرار التبديل */
+    .toggle-row{display:flex;gap:10px;margin-bottom:14px}
+    .toggle-row button{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .toggle-row .active{background:var(--accent);color:#fff}
+    .toggle-row .inactive{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    /* النماذج */
+    form{text-align:right}
+    .form-group{margin-bottom:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], select{
+      width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);
+      background:rgba(0,0,0,0.28);color:#eaf6ef;font-size:15px;
     }
-    .brand img {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-    }
-    .brand h1 {
-      margin: 0;
-      font-size: 20px;
-      color: #fff;
-    }
-    .stats {
-      display: flex;
-      gap: 14px;
-      font-size: 14px;
-      color: #bfc7c2;
-    }
-    .stat {
-      background: rgba(255,255,255,0.05);
-      padding: 8px 12px;
-      border-radius: 10px;
-    }
-    .wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 20px 40px;
-    }
-    .card {
-      width: 900px;
-      max-width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      gap: 28px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-    }
-    .promo {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-    }
-    .promo h2 {
-      margin: 0;
-      font-size: 22px;
-      color: #fff;
-    }
-    .promo p {
-      margin: 0;
-      color: #bfc7c2;
-      line-height: 1.6;
-    }
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .feature {
-      background: rgba(255,255,255,0.05);
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      color: #eaf6ef;
-    }
-    .login {
-      background: rgba(255,255,255,0.05);
-      padding: 18px;
-      border-radius: 12px;
-    }
-    .login h2 {
-      margin: 0 0 8px 0;
-      color: #fff;
-    }
-    .form-group {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      color: #bfc7c2;
-      margin-bottom: 6px;
-    }
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: #eaf6ef;
-      font-size: 15px;
-    }
-    input:focus {
-      outline: none;
-      border-color: #00b894;
-      box-shadow: 0 6px 18px rgba(0,184,148,0.3);
-    }
-    .btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #00b894;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    .btn:hover {
-      background: #00966f;
-    }
-    .error { color: #ff6b6b; font-size: 13px; margin-top: 6px; }
-    .success { color: #2ecc71; font-size: 13px; margin-top: 6px; }
-    @media (max-width:900px){
-      .card{grid-template-columns:1fr;}
+    input:focus, select:focus{outline:none;border-color:var(--accent);box-shadow:0 8px 24px rgba(0,184,148,0.12)}
+    .row{display:flex;gap:10px}
+    .btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;font-size:15px;margin-top:8px}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);width:auto;padding:10px 12px}
+    .muted-link{color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+
+    .strength{height:8px;border-radius:8px;background:rgba(255,255,255,0.04);overflow:hidden;margin-top:8px}
+    .strength > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff6b6b,#f7b731);transition:width .25s}
+    .strength-text{font-size:13px;color:var(--muted);margin-top:6px}
+
+    .small{font-size:13px;color:var(--muted);margin-top:10px}
+    .error{color:var(--danger);font-size:13px;margin-top:8px}
+    .success{color:var(--success);font-size:13px;margin-top:8px}
+
+    /* صورة الملف الشخصي */
+    .avatar-preview{width:84px;height:84px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,0.06);background:#0b3d2e;margin:8px auto}
+    .avatar-preview img{width:100%;height:100%;object-fit:cover}
+
+    @media (max-width:600px){
+      .card{padding:18px}
+      .card .logo-top{width:96px;height:96px;margin-top:-56px}
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <header class="topbar" role="banner">
     <div class="brand">
-      <img src="logo1" alt="شعار Mopi Market">
-      <h1>Mopi Market</h1>
+      <div class="logo"><img src="logo1.jpeg" alt="Mopi Market" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="brand-text">
+        <h1>Mopi Market</h1>
+        <div class="tag">أسعار متميزة وجودة موثوقة</div>
+      </div>
     </div>
-    <div class="stats">
-      <div class="stat">⭐ 4.0</div>
-      <div class="stat">المرتبة 1 من 10</div>
-      <div class="stat">+40,000 مستخدم</div>
-    </div>
-  </div>
+  </header>
 
-  <main class="wrap">
-    <section class="card">
-      <aside class="promo">
-        <div>
-          <h2>أفضل تجربة تسوق</h2>
-          <p>استمتع بأسعار متميزة، جودة عالية، وخدمة عملاء على مدار الساعة.</p>
-          <div class="features">
-            <div class="feature">💰 أسعار منافسة</div>
-            <div class="feature">📦 منتجات متنوعة</div>
-            <div class="feature">⚡ سرعة التوصيل</div>
-            <div class="feature">🔒 أمان وحماية</div>
-          </div>
+  <main class="wrap" role="main">
+    <section class="card" aria-labelledby="mainTitle">
+      <div class="logo-top"><img src="logo1.jpeg" alt="شعار Mopi Market"></div>
+
+      <h2 id="mainTitle">مرحبًا بك</h2>
+      <div class="sub">اختر تسجيل الدخول أو إنشاء حساب لأول مرة — مصمم ليتناسب مع شخصيات متنوعة</div>
+
+      <div class="toggle-row" role="tablist" aria-label="تبديل الدخول والتسجيل">
+        <button id="btnLogin" class="active" role="tab" aria-selected="true">تسجيل الدخول</button>
+        <button id="btnRegister" class="inactive" role="tab" aria-selected="false">إنشاء حساب لأول مرة</button>
+      </div>
+
+      <!-- Login form -->
+      <form id="loginForm" onsubmit="return handleLogin(event)" novalidate>
+        <div class="form-group">
+          <label for="loginIdentifier">البريد الإلكتروني أو اسم المستخدم</label>
+          <input id="loginIdentifier" name="loginIdentifier" type="text" autocomplete="username" placeholder="البريد أو اسم المستخدم" required>
         </div>
-      </aside>
 
-      <section class="login">
-        <h2>تسجيل الدخول</h2>
-        <form id="loginForm" onsubmit="return handleLogin(event)">
-          <div class="form-group">
-            <label for="username">اسم المستخدم</label>
-            <input id="username" type="text" required>
+        <div class="form-group">
+          <label for="loginPassword">كلمة المرور</label>
+          <div style="position:relative">
+            <input id="loginPassword" name="loginPassword" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور" required>
+            <button type="button" id="toggleLoginPwd" title="إظهار/إخفاء" style="position:absolute;left:8px;top:8px;background:none;border:none;color:var(--muted);cursor:pointer">👁️</button>
           </div>
-          <div class="form-group">
-            <label for="password">كلمة المرور</label>
-            <input id="password" type="password" required>
+          <div class="strength" aria-hidden="true"><i id="loginStrengthBar" style="width:0%"></i></div>
+          <div class="strength-text">قوة كلمة المرور: <strong id="loginStrengthLabel">ضعيفة</strong></div>
+        </div>
+
+        <div class="form-group" style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+          <label style="display:flex;align-items:center;gap:8px"><input id="remember" type="checkbox"> تذكّرني</label>
+          <label style="display:flex;align-items:center;gap:8px"><input id="rememberDevice" type="checkbox"> تذكّر هذا الجهاز</label>
+        </div>
+
+        <div class="form-group">
+          <label for="persona">نوع الحساب (شخصية)</label>
+          <select id="persona" aria-label="اختيار نوع الشخصية">
+            <option value="buyer">مشتري</option>
+            <option value="influencer">مؤثر / مسوق</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button class="btn" type="submit">دخول</button>
+        </div>
+
+        <div id="loginMessage" role="status" aria-live="polite"></div>
+
+        <div class="small">إذا كانت هذه زيارتك الأولى، اختر "إنشاء حساب لأول مرة".</div>
+      </form>
+
+      <!-- Register form (مخفي افتراضياً) -->
+      <form id="registerForm" onsubmit="return handleRegister(event)" novalidate style="display:none;margin-top:8px;text-align:right">
+        <div class="form-group">
+          <label for="regName">الاسم الكامل</label>
+          <input id="regName" name="regName" type="text" placeholder="الاسم الكامل" required>
+        </div>
+
+        <div class="form-group">
+          <label for="regAge">العمر</label>
+          <input id="regAge" name="regAge" type="number" min="13" max="120" placeholder="مثال: 30" required>
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail">البريد الإلكتروني</label>
+          <input id="regEmail" name="regEmail" type="email" autocomplete="email" placeholder="example@domain.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="regPwd">كلمة المرور</label>
+          <div style="position:relative">
+            <input id="regPwd" name="regPwd" type="password" placeholder="كلمة مرور قوية" required>
+            <button type="button" id="toggleRegPwd" title="إظهار/إخفاء" style="position:absolute;left:8px;top:8px;background:none;border:none;color:var(--muted);cursor:pointer">👁️</button>
           </div>
-          <button class="btn" type="submit">تسجيل الدخول</button>
-          <div id="message"></div>
-        </form>
-      </section>
+          <div class="strength" aria-hidden="true"><i id="regStrengthBar" style="width:0%"></i></div>
+          <div class="strength-text">قوة كلمة المرور: <strong id="regStrengthLabel">ضعيفة</strong></div>
+        </div>
+
+        <div class="form-group">
+          <label for="regRole">أختار دور الحساب</label>
+          <select id="regRole" name="regRole">
+            <option value="buyer">مشتري</option>
+            <option value="seller">بائع</option>
+            <option value="influencer">مؤثر / مسوق</option>
+            <option value="guest">زائر</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="text-align:center">
+          <div class="avatar-preview" id="avatarPreview"><img id="avatarImg" src="" alt="" style="display:none"></div>
+          <label for="avatarUpload" class="muted-link" style="cursor:pointer">رفع صورة شخصية (اختياري)</label>
+          <input id="avatarUpload" type="file" accept="image/*" style="display:none">
+        </div>
+
+        <div class="form-group">
+          <button class="btn" type="submit">إنشاء الحساب</button>
+        </div>
+
+        <div id="regMessage" role="status" aria-live="polite"></div>
+      </form>
     </section>
   </main>
 
   <script>
+    /***********************
+     * Background animation *
+     * مجسمات متحركة بسيطة تعطي إحساس ثلاثي الأبعاد
+     ***********************/
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+    window.addEventListener('resize', () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; initShapes(); });
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    const shapes = [];
+    const COUNT = Math.max(8, Math.floor((W*H)/180000));
+
+    function createShape(){
+      return {
+        x: rand(-0.2*W, 1.2*W),
+        y: rand(-0.2*H, 1.2*H),
+        vx: rand(-0.25,0.25),
+        vy: rand(-0.08,0.08),
+        r: rand(80,260),
+        rot: rand(0,Math.PI*2),
+        vrot: rand(-0.002,0.002),
+        depth: rand(0.6,1.6),
+        color: `rgba(${Math.floor(rand(0,20))},${Math.floor(rand(120,200))},${Math.floor(rand(80,160))},`
+      };
+    }
+
+    function initShapes(){
+      shapes.length = 0;
+      for(let i=0;i<COUNT;i++) shapes.push(createShape());
+    }
+
+    function drawShapes(){
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = 'rgba(2,6,23,0.12)';
+      ctx.fillRect(0,0,W,H);
+      for(const s of shapes){
+        s.x += s.vx * (1/s.depth);
+        s.y += s.vy * (1/s.depth);
+        s.rot += s.vrot;
+        if(s.x < -0.5*W) s.x = 1.5*W;
+        if(s.x > 1.5*W) s.x = -0.5*W;
+        if(s.y < -0.5*H) s.y = 1.5*H;
+        if(s.y > 1.5*H) s.y = -0.5*H;
+
+        const g = ctx.createRadialGradient(s.x, s.y, s.r*0.1, s.x, s.y, s.r);
+        g.addColorStop(0, s.color + '0.18)');
+        g.addColorStop(0.4, s.color + '0.10)');
+        g.addColorStop(1, s.color + '0)');
+
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rot);
+        ctx.scale(s.depth, s.depth);
+        ctx.translate(-s.x, -s.y);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.ellipse(s.x, s.y, s.r, s.r*0.7, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(drawShapes);
+    }
+
+    initShapes();
+    drawShapes();
+
+    /***********************
+     * IndexedDB utilities *
+     ***********************/
+    const DB_NAME = 'mopi_mkt_db';
+    const DB_VERSION = 1;
+    const STORE_USERS = 'users';
+
+    function openDB(){
+      return new Promise((resolve,reject)=>{
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if(!db.objectStoreNames.contains(STORE_USERS)){
+            const store = db.createObjectStore(STORE_USERS, { keyPath: 'email' });
+            store.createIndex('username', 'username', { unique: true });
+            store.createIndex('name', 'name', { unique: false });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getUserByEmail(email){
+      const db = await openDB();
+      return new Promise((resolve,reject)=>{
+        const tx = db.transaction(STORE_USERS,'readonly');
+        const store = tx.objectStore(STORE_USERS);
+        const r = store.get(email);
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      });
+    }
+
+    async function getUserByUsername(username){
+      const db = await openDB();
+      return new Promise((resolve,reject)=>{
+        const tx = db.transaction(STORE_USERS,'readonly');
+        const store = tx.objectStore(STORE_USERS);
+        const idx = store.index('username');
+        const r = idx.get(username);
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      });
+    }
+
+    async function addUser(user){
+      const db = await openDB();
+      return new Promise((resolve,reject)=>{
+        const tx = db.transaction(STORE_USERS,'readwrite');
+        const store = tx.objectStore(STORE_USERS);
+        const r = store.add(user);
+        r.onsuccess = () => resolve(true);
+        r.onerror = () => reject(r.error);
+      });
+    }
+
+    /************************
+     * Password hashing     *
+     ************************/
     async function hashPassword(password){
       const enc = new TextEncoder();
       const data = enc.encode(password);
@@ -202,40 +364,215 @@
       return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
     }
 
-    async function openDB(){
-      return new Promise((resolve,reject)=>{
-        const req = indexedDB.open('mopiDB',1);
-        req.onupgradeneeded = e=>{
-          const db = e.target.result;
-          if(!db.objectStoreNames.contains('users')){
-            db.createObjectStore('users',{keyPath:'username'});
-          }
+    /************************
+     * Password strength    *
+     ************************/
+    function evaluateStrength(pwd){
+      let score = 0;
+      if(!pwd) return {score:0,label:'ضعيفة',pct:0,color:'#ff6b6b'};
+      if(pwd.length >= 8) score++;
+      if(pwd.length >= 12) score++;
+      if(/[A-Z]/.test(pwd)) score++;
+      if(/[0-9]/.test(pwd)) score++;
+      if(/[^A-Za-z0-9]/.test(pwd)) score++;
+      const s = Math.min(4, score);
+      const pct = (s / 4) * 100;
+      let label='ضعيفة', color='#ff6b6b';
+      if(s <= 1){ label='ضعيفة'; color='#ff6b6b'; }
+      else if(s === 2){ label='متوسطة'; color='#f7b731'; }
+      else if(s === 3){ label='قوية'; color='#2ecc71'; }
+      else { label='قوية جدًا'; color='#00b894'; }
+      return {score:s,label,pct,color};
+    }
+
+    /************************
+     * UI wiring & handlers *
+     ************************/
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginIdentifier = document.getElementById('loginIdentifier');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginStrengthBar = document.getElementById('loginStrengthBar');
+    const loginStrengthLabel = document.getElementById('loginStrengthLabel');
+    const toggleLoginPwd = document.getElementById('toggleLoginPwd');
+    const loginMessage = document.getElementById('loginMessage');
+
+    const regName = document.getElementById('regName');
+    const regAge = document.getElementById('regAge');
+    const regEmail = document.getElementById('regEmail');
+    const regPwd = document.getElementById('regPwd');
+    const regRole = document.getElementById('regRole');
+    const regStrengthBar = document.getElementById('regStrengthBar');
+    const regStrengthLabel = document.getElementById('regStrengthLabel');
+    const regMessage = document.getElementById('regMessage');
+
+    const avatarUpload = document.getElementById('avatarUpload');
+    const avatarImg = document.getElementById('avatarImg');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    // تبديل بين النماذج
+    btnLogin.addEventListener('click', () => {
+      btnLogin.classList.add('active'); btnLogin.classList.remove('inactive');
+      btnRegister.classList.remove('active'); btnRegister.classList.add('inactive');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      loginIdentifier.focus();
+    });
+    btnRegister.addEventListener('click', () => {
+      btnRegister.classList.add('active'); btnRegister.classList.remove('inactive');
+      btnLogin.classList.remove('active'); btnLogin.classList.add('inactive');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      regName.focus();
+    });
+
+    // قوة كلمة المرور
+    loginPassword.addEventListener('input', () => {
+      const st = evaluateStrength(loginPassword.value);
+      loginStrengthBar.style.width = st.pct + '%';
+      loginStrengthBar.style.background = st.color;
+      loginStrengthLabel.textContent = st.label;
+    });
+    regPwd.addEventListener('input', () => {
+      const st = evaluateStrength(regPwd.value);
+      regStrengthBar.style.width = st.pct + '%';
+      regStrengthBar.style.background = st.color;
+      regStrengthLabel.textContent = st.label;
+    });
+
+    // إظهار/إخفاء كلمة المرور
+    toggleLoginPwd.addEventListener('click', () => {
+      if(loginPassword.type === 'password'){ loginPassword.type = 'text'; toggleLoginPwd.textContent = '🙈'; }
+      else { loginPassword.type = 'password'; toggleLoginPwd.textContent = '👁️'; }
+    });
+    document.getElementById('toggleRegPwd').addEventListener('click', () => {
+      const el = regPwd;
+      const btn = document.getElementById('toggleRegPwd');
+      if(el.type === 'password'){ el.type = 'text'; btn.textContent = '🙈'; }
+      else { el.type = 'password'; btn.textContent = '👁️'; }
+    });
+
+    // رفع صورة شخصية وتخزينها كـ data URL (حقيقي على جانب العميل)
+    avatarUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      if(!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatarImg.src = reader.result;
+        avatarImg.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // تسجيل مستخدم جديد (حقيقي: يخزن في IndexedDB)
+    async function handleRegister(e){
+      e.preventDefault();
+      regMessage.textContent = ''; regMessage.className = 'small';
+      const name = regName.value.trim();
+      const age = parseInt(regAge.value,10);
+      const email = regEmail.value.trim().toLowerCase();
+      const pwd = regPwd.value;
+      const role = regRole.value;
+      const avatarData = avatarImg.src || '';
+
+      if(!name || !email || !pwd || !age){ regMessage.textContent = 'يرجى ملء جميع الحقول المطلوبة.'; regMessage.className='error'; return false; }
+      if(age < 13){ regMessage.textContent = 'يجب أن يكون العمر 13 سنة أو أكثر.'; regMessage.className='error'; return false; }
+
+      try{
+        // تحقق من وجود البريد أو اسم مستخدم
+        const existingByEmail = await getUserByEmail(email);
+        if(existingByEmail){ regMessage.textContent = 'البريد الإلكتروني مستخدم بالفعل.'; regMessage.className='error'; return false; }
+
+        // توليد اسم مستخدم فريد تلقائيًا من الاسم (username) إن لم يكن مطلوبًا
+        let username = name.toLowerCase().replace(/\s+/g, '.').replace(/[^a-z0-9\.\-_]/g,'');
+        if(!username) username = 'user' + Date.now();
+        // تأكد من تفرد username
+        let suffix = 0;
+        while(true){
+          const tryUsername = suffix === 0 ? username : username + suffix;
+          const existingByUsername = await getUserByUsername(tryUsername);
+          if(!existingByUsername){ username = tryUsername; break; }
+          suffix++;
+        }
+
+        const hashed = await hashPassword(pwd);
+        const userObj = {
+          email,
+          username,
+          name,
+          age,
+          role,
+          avatar: avatarData,
+          passwordHash: hashed,
+          createdAt: new Date().toISOString()
         };
-        req.onsuccess=()=>resolve(req.result);
-        req.onerror=()=>reject(req.error);
-      });
+
+        await addUser(userObj);
+        regMessage.textContent = 'تم إنشاء الحساب بنجاح. يمكنك الآن تسجيل الدخول.';
+        regMessage.className = 'success';
+
+        // بعد التسجيل، املأ حقل البريد في نموذج الدخول لتسهيل الدخول
+        setTimeout(()=>{ registerForm.reset(); avatarImg.src=''; avatarImg.style.display='none'; registerForm.style.display='none'; loginForm.style.display='block'; document.getElementById('loginIdentifier').value = email; document.getElementById('loginPassword').focus(); regMessage.textContent=''; }, 900);
+      }catch(err){
+        console.error(err);
+        regMessage.textContent = 'حدث خطأ أثناء إنشاء الحساب.'; regMessage.className='error';
+      }
+      return false;
     }
 
-    async function getUser(username){
-      const db = await openDB();
-      return new Promise((resolve,reject)=>{
-        const tx = db.transaction('users','readonly');
-        const store = tx.objectStore('users');
-        const r = store.get(username);
-        r.onsuccess=()=>resolve(r.result);
-        r.onerror=()=>reject(r.error);
-      });
-    }
-
+    // تسجيل الدخول (حقيقي: يتحقق من IndexedDB ويخزن الجلسة محليًا)
     async function handleLogin(e){
       e.preventDefault();
-      const username=document.getElementById('username').value.trim();
-      const pwd=document.getElementById('password').value;
-      const msg=document.getElementById('message');
-      msg.textContent='';
-      if(!username||!pwd){msg.textContent='يرجى إدخال البيانات';msg.className='error';return false;}
+      loginMessage.textContent = ''; loginMessage.className = 'small';
+      const identifier = loginIdentifier.value.trim();
+      const pwd = loginPassword.value;
+      if(!identifier || !pwd){ loginMessage.textContent = 'يرجى إدخال البريد أو اسم المستخدم وكلمة المرور.'; loginMessage.className='error'; return false; }
+
       try{
-        const user=await getUser(username);
-        if(!user){msg.textContent='المستخدم غير موجود';msg.className='error';return false;}
-        const hashed=await hashPassword(pwd);
-        if(hashed!==user.passwordHash){msg.textContent='كلمة المرور غير صحيحة';msg.className='error';return false;}
+        let user = null;
+        // حاول البحث كبريد أولاً
+        user = await getUserByEmail(identifier.toLowerCase());
+        if(!user){
+          // حاول البحث كاسم مستخدم
+          user = await getUserByUsername(identifier);
+        }
+        if(!user){ loginMessage.textContent = 'المستخدم غير موجود. يمكنك إنشاء حساب جديد.'; loginMessage.className='error'; return false; }
+
+        const hashed = await hashPassword(pwd);
+        if(hashed !== user.passwordHash){ loginMessage.textContent = 'كلمة المرور غير صحيحة.'; loginMessage.className='error'; return false; }
+
+        // جلسة حقيقية مخزنة محليًا
+        const session = { email: user.email, username: user.username, name: user.name, role: user.role, loggedAt: new Date().toISOString() };
+        if(document.getElementById('remember').checked){
+          localStorage.setItem('mopi_session', JSON.stringify(session));
+        } else {
+          sessionStorage.setItem('mopi_session', JSON.stringify(session));
+        }
+        if(document.getElementById('rememberDevice').checked){
+          localStorage.setItem('mopi_remember_device', user.email);
+        }
+
+        loginMessage.textContent = 'تم تسجيل الدخول بنجاح. جاري التحويل...'; loginMessage.className='success';
+        setTimeout(()=>{ window.location.href = 'poi.html'; }, 700);
+      }catch(err){
+        console.error(err);
+        loginMessage.textContent = 'حدث خطأ أثناء تسجيل الدخول.'; loginMessage.className='error';
+      }
+      return false;
+    }
+
+    // ربط الأحداث
+    registerForm.addEventListener('submit', handleRegister);
+    loginForm.addEventListener('submit', handleLogin);
+
+    // تهيئة التركيز
+    document.getElementById('loginIdentifier').focus();
+
+    // منع أي نصوص أو إشارات إلى "محاكاة" — كل العمليات هنا حقيقية على جانب العميل (IndexedDB)
+    // لا توجد وظائف تعتمد على خوادم خارجية في هذا الملف؛ لميزات مثل OAuth أو استعادة كلمة المرور عبر البريد يلزم وجود خادم.
+  </script>
+</body>
+          </html>
