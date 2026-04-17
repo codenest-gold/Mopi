@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mopi Market – تسجيل الدخول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#f5f3ef; --surface:#ffffff; --surface2:#faf9f6;
+      --border:#e8e4dd; --accent:#c8521a; --accent2:#e8742e;
+      --accent-lt:#fdf0e8; --text:#1a1714; --text2:#5c5650;
+      --muted:#9a948c; --error:#d93025; --success:#1a7f4b;
+      --shadow:rgba(26,23,20,0.08);
+    }
+    html,body { min-height:100vh; background:var(--bg); font-family:'Cairo',sans-serif; color:var(--text); }
+    body { display:flex; align-items:stretch; overflow:hidden; }
+
+    /* LEFT PANEL */
+    .panel-left {
+      flex:0 0 45%; background:var(--text);
+      position:relative; overflow:hidden;
+      display:flex; flex-direction:column;
+      justify-content:space-between; padding:52px 48px;
+    }
+    .panel-left::before {
+      content:''; position:absolute;
+      width:500px; height:500px; border-radius:50%;
+      background:radial-gradient(circle,rgba(200,82,26,.25) 0%,transparent 70%);
+      top:-100px; left:-100px;
+    }
+    .panel-left::after {
+      content:''; position:absolute;
+      width:300px; height:300px; border-radius:50%;
+      background:radial-gradient(circle,rgba(232,116,46,.15) 0%,transparent 70%);
+      bottom:40px; right:-60px;
+    }
+    .texture {
+      position:absolute; inset:0;
+      background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 28px);
+    }
+    .brand { position:relative; z-index:2; }
+    .brand-logo { display:flex; align-items:center; gap:12px; }
+    .logo-mark {
+      width:44px; height:44px; background:var(--accent);
+      border-radius:12px; display:flex; align-items:center;
+      justify-content:center; font-size:20px;
+      box-shadow:0 4px 16px rgba(200,82,26,.4); flex-shrink:0;
+    }
+    .brand-name { font-family:'Tajawal',sans-serif; font-size:1.55rem; font-weight:700; color:#fff; }
+    .brand-name span { color:var(--accent2); }
+
+    .panel-hero { position:relative; z-index:2; }
+    .panel-hero h2 {
+      font-size:clamp(1.8rem,3vw,2.6rem); font-weight:900;
+      color:#fff; line-height:1.25; margin-bottom:18px; letter-spacing:-.5px;
+    }
+    .panel-hero h2 em { font-style:normal; color:var(--accent2); }
+    .panel-hero p { color:rgba(255,255,255,.5); font-size:.9rem; line-height:1.7; max-width:280px; }
+
+    .stats-row { position:relative; z-index:2; display:flex; gap:28px; }
+    .stat { text-align:center; }
+    .stat-num { font-family:'Tajawal',sans-serif; font-size:1.5rem; font-weight:700; color:var(--accent2); }
+    .stat-label { font-size:.72rem; color:rgba(255,255,255,.4); margin-top:2px; }
+    .stat-divider { width:1px; background:rgba(255,255,255,.1); align-self:stretch; }
+
+    /* RIGHT PANEL */
+    .panel-right {
+      flex:1; display:flex; align-items:center;
+      justify-content:center; padding:40px 24px;
+      overflow-y:auto; background:var(--bg);
+    }
+    .form-card { width:100%; max-width:400px; animation:slideUp .55s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    .form-header { margin-bottom:32px; }
+    .eyebrow {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--accent-lt); color:var(--accent);
+      font-size:.75rem; font-weight:600; padding:5px 12px;
+      border-radius:100px; margin-bottom:14px;
+      border:1px solid rgba(200,82,26,.15);
+    }
+    .eyebrow svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2.5; }
+    .form-header h1 { font-size:1.75rem; font-weight:900; letter-spacing:-.5px; line-height:1.2; }
+    .form-header p { color:var(--muted); font-size:.88rem; margin-top:6px; }
+
+    /* Tabs */
+    .tabs {
+      display:flex; background:var(--surface2);
+      border:1px solid var(--border); border-radius:12px;
+      padding:4px; margin-bottom:24px; gap:4px;
+    }
+    .tab-btn {
+      flex:1; padding:9px; border:none; background:transparent;
+      border-radius:9px; font-family:'Cairo',sans-serif;
+      font-size:.88rem; font-weight:600; color:var(--muted); cursor:pointer; transition:all .22s;
+    }
+    .tab-btn.active { background:var(--surface); color:var(--text); box-shadow:0 1px 6px var(--shadow),0 0 0 1px var(--border); }
+
+    /* Inputs */
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:.82rem; font-weight:600; color:var(--text2); margin-bottom:7px; }
+    .input-wrap { position:relative; }
+    .input-icon {
+      position:absolute; top:50%; right:13px; transform:translateY(-50%);
+      width:18px; height:18px; color:var(--muted); pointer-events:none;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .input-icon svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; }
+    input[type="text"],input[type="email"],input[type="password"] {
+      width:100%; background:var(--surface); border:1.5px solid var(--border);
+      border-radius:11px; padding:12px 40px 12px 14px;
+      font-family:'Cairo',sans-serif; font-size:.9rem; color:var(--text);
+      outline:none; transition:border-color .2s,box-shadow .2s;
+    }
+    input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(200,82,26,.12); }
+    input::placeholder { color:var(--muted); font-size:.85rem; }
+    .eye-btn {
+      position:absolute; top:50%; left:12px; transform:translateY(-50%);
+      background:none; border:none; cursor:pointer; color:var(--muted);
+      display:flex; align-items:center; padding:2px; transition:color .2s;
+    }
+    .eye-btn:hover { color:var(--accent); }
+    .eye-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; }
+
+    .row-flex { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+    .check-label { display:flex; align-items:center; gap:8px; cursor:pointer; font-size:.82rem; color:var(--text2); }
+    .check-label input[type="checkbox"] { width:15px; height:15px; accent-color:var(--accent); cursor:pointer; }
+    .link-sm { font-size:.82rem; color:var(--accent); text-decoration:none; font-weight:600; transition:color .2s; }
+    .link-sm:hover { color:var(--accent2); }
+
+    /* Alert */
+    .alert { display:none; border-radius:10px; padding:11px 14px; font-size:.82rem; font-weight:500; margin-bottom:16px; align-items:center; gap:8px; }
+    .alert.show { display:flex; }
+    .alert-error { background:#fef2f2; border:1px solid #fecaca; color:var(--error); }
+    .alert-success { background:#f0fdf4; border:1px solid #bbf7d0; color:var(--success); }
+    .alert svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+
+    /* Buttons */
+    .btn-primary {
+      width:100%; background:var(--accent); color:#fff; border:none;
+      border-radius:11px; padding:14px; font-family:'Cairo',sans-serif;
+      font-size:.95rem; font-weight:700; cursor:pointer;
+      transition:background .2s,transform .15s,box-shadow .2s;
+      box-shadow:0 4px 16px rgba(200,82,26,.3);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-primary:hover:not(:disabled) { background:var(--accent2); transform:translateY(-1px); box-shadow:0 6px 22px rgba(200,82,26,.38); }
+    .btn-primary:active:not(:disabled) { transform:translateY(0); }
+    .btn-primary:disabled { opacity:.65; cursor:not-allowed; transform:none; }
+    .btn-google {
+      width:100%; background:var(--surface); color:var(--text);
+      border:1.5px solid var(--border); border-radius:11px; padding:12px;
+      font-family:'Cairo',sans-serif; font-size:.88rem; font-weight:600;
+      cursor:pointer; transition:border-color .2s,box-shadow .2s,background .2s;
+      display:flex; align-items:center; justify-content:center; gap:10px; margin-top:12px;
+    }
+    .btn-google:hover { background:var(--surface2); border-color:#c0bbb4; box-shadow:0 2px 8px var(--shadow); }
+    .google-icon { width:18px; height:18px; flex-shrink:0; }
+
+    .or-divider { display:flex; align-items:center; gap:12px; margin:18px 0; }
+    .or-divider::before,.or-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .or-divider span { color:var(--muted); font-size:.78rem; }
+
+    .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%; animation:spin .65s linear infinite; flex-shrink:0; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Strength */
+    .strength-bar { display:none; margin-top:7px; }
+    .strength-bar.show { display:block; }
+    .strength-track { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:4px; }
+    .strength-fill { height:100%; border-radius:2px; transition:width .3s,background .3s; }
+    .strength-text { font-size:.73rem; color:var(--muted); }
+
+    .form-footer { text-align:center; margin-top:20px; font-size:.8rem; color:var(--muted); }
+    .form-footer a { color:var(--accent); text-decoration:none; font-weight:600; }
+
+    @media(max-width:768px){
+      body { flex-direction:column; overflow:auto; }
+      .panel-left { flex:0 0 auto; padding:28px 22px; }
+      .panel-hero h2 { font-size:1.35rem; }
+      .stats-row { gap:16px; }
+      .panel-right { padding:28px 18px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="panel-left">
+  <div class="texture"></div>
+  <div class="brand">
+    <div class="brand-logo">
+      <div class="logo-mark">🛍️</div>
+      <span class="brand-name">Mopi <span>Market</span></span>
+    </div>
+  </div>
+  <div class="panel-hero">
+    <h2>تسوّق بذكاء،<br/>وفّر <em>أكثر</em></h2>
+    <p>اكتشف آلاف المنتجات بأفضل الأسعار مع تجربة تسوق سلسة وآمنة.</p>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">+50K</div><div class="stat-label">مستخدم نشط</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num">+200K</div><div class="stat-label">منتج متاح</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">تقييم المستخدمين</div></div>
+  </div>
+</div>
+
+<div class="panel-right">
+  <div class="form-card">
+
+    <div class="form-header">
+      <div class="eyebrow">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        دخول آمن ومشفّر
+      </div>
+      <h1 id="formTitle">مرحباً بك!</h1>
+      <p id="formSubtitle">سجّل دخولك للوصول لحسابك</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">تسجيل الدخول</button>
+      <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">حساب جديد</button>
+    </div>
+
+    <div class="alert alert-error" id="alertBox">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="alertText"></span>
+    </div>
+
+    <div id="loginForm">
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+          <input type="email" id="loginEmail" placeholder="example@email.com" autocomplete="email"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="eye-btn" type="button" onclick="toggleEye('loginPassword',this)"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <div class="row-flex">
+        <label class="check-label"><input type="checkbox" id="rememberMe"/> تذكّرني</label>
+        <a href="#" class="link-sm" onclick="handleForgotPassword();return false;">نسيت كلمة المرور؟</a>
+      </div>
+      <button class="btn-primary" id="loginBtn" onclick="handleLogin()">تسجيل الدخول</button>
+      <div class="or-divider"><span>أو</span></div>
+      <button class="btn-google" onclick="handleGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        الدخول بحساب Google
+      </button>
+    </div>
+
+    <div id="registerForm" style="display:none">
+      <div class="form-group">
+        <label>الاسم الكامل</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <input type="text" id="regName" placeholder="الاسم الكامل"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+          <input type="email" id="regEmail" placeholder="example@email.com" autocomplete="email"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <input type="password" id="regPassword" placeholder="6 أحرف على الأقل" oninput="checkStrength(this.value)" autocomplete="new-password"/>
+          <button class="eye-btn" type="button" onclick="toggleEye('regPassword',this)"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <div class="strength-bar" id="strengthBar">
+          <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
+          <div class="strength-text" id="strengthText"></div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:22px">
+        <label>تأكيد كلمة المرور</label>
+        <div class="input-wrap">
+          <div class="input-icon"><svg viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <input type="password" id="regConfirm" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password"/>
+          <button class="eye-btn" type="button" onclick="toggleEye('regConfirm',this)"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <button class="btn-primary" id="registerBtn" onclick="handleRegister()">إنشاء الحساب</button>
+      <div class="or-divider"><span>أو</span></div>
+      <button class="btn-google" onclick="handleGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        التسجيل بحساب Google
+      </button>
+    </div>
+
+    <div class="form-footer">
+      بالمتابعة أنت توافق على <a href="#">شروط الاستخدام</a> و<a href="#">سياسة الخصوصية</a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail,
+    updateProfile, setPersistence, browserLocalPersistence, browserSessionPersistence
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  // إعدادات مشروعك
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfecAbSWaJfcXox7HBDKLjXdwpVyFnvEQ",
+    authDomain: "mopi-5b11b.firebaseapp.com",
+    projectId: "mopi-5b11b",
+    storageBucket: "mopi-5b11b.firebasestorage.app",
+    messagingSenderId: "1045999810663",
+    appId: "1:1045999810663:web:ea56ddeed5cfec77453cc2",
+    measurementId: "G-4PLBETDRVQ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  let analytics;
+  try {
+    // تشغيل الإحصائيات (قد يظهر خطأ إذا كنت تعمل على Localhost بدون سيرفر، وضعناها في try/catch لحماية الكود)
+    analytics = getAnalytics(app);
+  } catch (err) {
+    console.warn("تعذر تشغيل Analytics، غالباً بسبب بيئة التطوير المحلية.");
+  }
+  
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // خريطة الأخطاء مع إضافة الأخطاء الشائعة لتطوير Firebase
+  const errorMap = {
+    'auth/user-not-found':        'لا يوجد حساب بهذا البريد الإلكتروني',
+    'auth/wrong-password':        'كلمة المرور غير صحيحة',
+    'auth/invalid-email':         'البريد الإلكتروني غير صالح',
+    'auth/email-already-in-use':  'هذا البريد مسجّل مسبقاً، سجّل الدخول',
+    'auth/weak-password':         'كلمة المرور ضعيفة جداً (6 أحرف على الأقل)',
+    'auth/too-many-requests':     'تم تعليق الحساب مؤقتاً، حاول لاحقاً',
+    'auth/popup-closed-by-user':  'تم إغلاق نافذة تسجيل الدخول',
+    'auth/network-request-failed':'خطأ في الشبكة، تحقق من اتصالك',
+    'auth/invalid-credential':    'البريد أو كلمة المرور غير صحيحة',
+    'auth/operation-not-allowed': 'لم تقم بتفعيل تسجيل الدخول بالبريد من لوحة تحكم Firebase!'
+  };
+
+  // دالة ذكية: إذا لم يكن الخطأ في القائمة، ستعرض الخطأ الفعلي من Firebase لتتمكن من حله
+  const getErrMsg = err => {
+    console.error("Firebase Auth Error:", err);
+    return errorMap[err.code] || `رسالة النظام: ${err.message}`;
+  };
+
+  const setLoading = (id, on, label='') => {
+    const b = document.getElementById(id);
+    b.disabled = on;
+    b.innerHTML = on ? `<span class="spinner"></span> جارٍ التحقق...` : label;
+  };
+
+  const showAlert = (msg, type='error') => {
+    const b = document.getElementById('alertBox');
+    b.className = `alert alert-${type} show`;
+    document.getElementById('alertText').textContent = msg;
+  };
+  const hideAlert = () => { document.getElementById('alertBox').className = 'alert alert-error'; };
+
+  const redirect = () => setTimeout(() => { window.location.href = 'plo.html'; }, 800);
+
+  // تسجيل الدخول
+  window.handleLogin = async () => {
+    hideAlert();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPassword').value;
+    const rem   = document.getElementById('rememberMe').checked;
+    if (!email || !pass) { showAlert('يرجى ملء جميع الحقول'); return; }
+    setLoading('loginBtn', true);
+    try {
+      await setPersistence(auth, rem ? browserLocalPersistence : browserSessionPersistence);
+      await signInWithEmailAndPassword(auth, email, pass);
+      const b = document.getElementById('loginBtn');
+      b.innerHTML = '✅ تم بنجاح!';
+      b.style.background = '#1a7f4b';
+      redirect();
+    } catch(e) {
+      setLoading('loginBtn', false, 'تسجيل الدخول');
+      showAlert(getErrMsg(e));
+    }
+  };
+
+  // إنشاء حساب
+  window.handleRegister = async () => {
+    hideAlert();
+    const name    = document.getElementById('regName').value.trim();
+    const email   = document.getElementById('regEmail').value.trim();
+    const pass    = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+    if (!name||!email||!pass||!confirm) { showAlert('يرجى ملء جميع الحقول'); return; }
+    if (pass !== confirm) { showAlert('كلمتا المرور غير متطابقتين'); return; }
+    if (pass.length < 6)  { showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+    setLoading('registerBtn', true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, { displayName: name });
+      const b = document.getElementById('registerBtn');
+      b.innerHTML = '✅ تم إنشاء الحساب!';
+      b.style.background = '#1a7f4b';
+      redirect();
+    } catch(e) {
+      setLoading('registerBtn', false, 'إنشاء الحساب');
+      showAlert(getErrMsg(e));
+    }
+  };
+
+  // حساب Google
+  window.handleGoogle = async () => {
+    hideAlert();
+    try {
+      await signInWithPopup(auth, googleProvider);
+      window.location.href = 'plo.html';
+    } catch(e) {
+      if (e.code !== 'auth/popup-closed-by-user') showAlert(getErrMsg(e));
+    }
+  };
+
+  // نسيان كلمة المرور
+  window.handleForgotPassword = async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) { showAlert('أدخل بريدك الإلكتروني في الحقل أعلاه أولاً'); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showAlert('✉️ تم إرسال رابط إعادة التعيين على بريدك', 'success');
+    } catch(e) {
+      showAlert(getErrMsg(e));
+    }
+  };
+</script>
+
+<script>
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('loginForm').style.display    = isLogin ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = isLogin ? 'none'  : 'block';
+    document.getElementById('tabLogin').className    = 'tab-btn' + (isLogin ? ' active' : '');
+    document.getElementById('tabRegister').className = 'tab-btn' + (!isLogin ? ' active' : '');
+    document.getElementById('formTitle').textContent    = isLogin ? 'مرحباً بك!' : 'إنشاء حساب جديد';
+    document.getElementById('formSubtitle').textContent = isLogin ? 'سجّل دخولك للوصول لحسابك' : 'انضم لـ Mopi Market مجاناً';
+    document.getElementById('alertBox').className = 'alert alert-error';
+  }
+
+  function toggleEye(id, btn) {
+    const inp = document.getElementById(id);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.innerHTML = show
+      ? `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+      : `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  }
+
+  function checkStrength(val) {
+    const bar  = document.getElementById('strengthBar');
+    const fill = document.getElementById('strengthFill');
+    const text = document.getElementById('strengthText');
+    if (!val) { bar.classList.remove('show'); return; }
+    bar.classList.add('show');
+    let s = 0;
+    if (val.length >= 6) s++;
+    if (val.length >= 10) s++;
+    if (/[A-Za-z]/.test(val)) s++;
+    if (/[0-9]/.test(val)) s++;
+    if (/[^A-Za-z0-9]/.test(val)) s++;
+    const levels = [
+      {w:'20%',bg:'#ef4444',t:'ضعيفة جداً'},
+      {w:'40%',bg:'#f97316',t:'ضعيفة'},
+      {w:'60%',bg:'#eab308',t:'مقبولة'},
+      {w:'80%',bg:'#84cc16',t:'جيدة'},
+      {w:'100%',bg:'#22c55e',t:'قوية جداً ✓'},
+    ];
+    const l = levels[Math.min(s,4)];
+    fill.style.width = l.w; fill.style.background = l.bg;
+    text.textContent = 'قوة كلمة المرور: ' + l.t; text.style.color = l.bg;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const loginVisible = document.getElementById('loginForm').style.display !== 'none';
+    if (loginVisible) handleLogin(); else handleRegister();
+  });
+</script>
+</body>
+</html>
